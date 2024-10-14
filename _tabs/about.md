@@ -1,32 +1,22 @@
 ---
-title:  "About Me"
+title: "About Me"
+order: 5
 permalink: /about/
-layout: about
 published: true
+layout: default
 
 author_profile: true
 ---
 
 ### 하루하루 성장하는 개발자, 김세이입니다.
-
-
-
-## 👨🏻‍🔧 About Me
----
-
-
-<br>
-### **Introduction**
-
-▪ 밀도 있는 삶을 지향하며 어떤 경험에서든 배움을 얻고 실천하려 합니다.   
-▪ 사회의 핵심 인재, 공헌할 수 있는 사람이 되고 싶습니다.  
-▪ 숨은 인사이트를 발굴하고 효과적으로 제시하는 방법을 연구합니다.  
-▪ 기록과 공유의 가치를 알기에 학습한 것들을 Github에 남기고, 블로그를 운영하며 소통하고 있습니다.
-
+밀도 있는 삶을 지향하며 어떤 경험에서든 배움을 얻고 실천하려 합니다.   
+숨은 인사이트를 발굴하고 효과적으로 제시하는 방법을 연구합니다.
+기록과 공유의 가치를 알기에 학습한 것들을 Github에 남기고, 블로그를 운영하며 소통하고 있습니다.
 
 
 <br>
-## 🧩 Skill
+🧩 Skill
+
 ---
 <div align=center>
 
@@ -75,11 +65,16 @@ author_profile: true
 
 
 <br>
-## 📜 Certificate 
+📜 Certificate
+
 ---
 
-**정보처리기사**
+정보처리기사 
 
-**SQLD (SQL 개발자)**
+SQLD (SQL 개발자)
 
-**컴퓨터활용능력 1급(필기 합)**
+데이터분석 준전문가 (ADsP)
+
+컴퓨터활용능력 1급(필기 합격)
+
+리눅스마스터 2급(1차 합격)

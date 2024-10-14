@@ -88,21 +88,12 @@ public class HomeController {
     - 브라우저에 index 요걸 보여주겠다 그걸 이제 스프링이 중간에서 처리를 다 해주는 것. 그래서 이 인덱스 html에는 헬로 스프링부트라는 내용을 출력하게끔 해 놓은 것. 그래서 우리 눈에는 주소로 접속을 했더니 이 내용이 눈에 보여짐
     - 스프링 부트 프로젝트를 만들어서 기본 주소를 요청하는 메서드를 생성. 기본 주소 요청에 대해서 인덱스 html을 띄워줬고 그 인덱스 html은 어떤 내용을 썼느냐 그게 바로 브라우저에 보여짐
 
+<br>
 **참고 자료**
 
 ---
 
 - https://www.youtube.com/watch?v=RhM1bQ76Tv0&list=PLV9zd3otBRt5ANIjawvd-el3QU594wyx7
-- [https://commnetall.tistory.com/106 - Intellij](https://commnetall.tistory.com/106)
-- [https://velog.io/@codingrecipe/SpringBoot-Spring-Initializr로-프로젝트-만들기](https://velog.io/@codingrecipe/SpringBoot-Spring-Initializr%EB%A1%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%A7%8C%EB%93%A4%EA%B8%B0)
-- [https://velog.io/@codingrecipe/mysql-설치하기](https://velog.io/@codingrecipe/mysql-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
-
-</br>
-**참고 자료**
-
----
-
-- <https://www.youtube.com/watch?v=RhM1bQ76Tv0&list=PLV9zd3otBRt5ANIjawvd-el3QU594wyx7>
 - [https://commnetall.tistory.com/106 - Intellij](https://commnetall.tistory.com/106)
 - [https://velog.io/@codingrecipe/SpringBoot-Spring-Initializr로-프로젝트-만들기](https://velog.io/@codingrecipe/SpringBoot-Spring-Initializr%EB%A1%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%A7%8C%EB%93%A4%EA%B8%B0)
 - [https://velog.io/@codingrecipe/mysql-설치하기](https://velog.io/@codingrecipe/mysql-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
