@@ -36,23 +36,17 @@ jobs:
 
       - name: Setup Ruby
         run: |
-          # Check if Ruby is installed
-          if ! command -v ruby &> /dev/null; then
-            echo "Ruby not found, installing..."
-            curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-installer | bash
-            export PATH="$HOME/.rbenv/bin:$PATH"
-            eval "$(rbenv init -)"
-            rbenv install 3.1.4 # 원하는 Ruby 버전으로 변경 가능
-            rbenv global 3.1.4
-          fi
-        shell: bash
-
-      - name: Install dependencies
-        run: |
+          # Install Ruby and Bundler
           gem install --user-install bundler
           export GEM_HOME="$HOME/.gem"
           export PATH="$GEM_HOME/bin:$PATH"
+          echo "GEM_HOME=$GEM_HOME" >> $GITHUB_ENV # Set GEM_HOME for future steps
           echo "PATH=$PATH" >> $GITHUB_ENV # Set PATH for future steps
+
+      - name: Install dependencies
+        run: |
+          # Ensure the PATH is updated
+          echo "$GEM_HOME/bin" >> $GITHUB_PATH
           bundle install
         env:
           JEKYLL_ENV: production
