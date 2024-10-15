@@ -52,6 +52,7 @@ jobs:
           gem install --user-install bundler
           export GEM_HOME="$HOME/.gem"
           export PATH="$GEM_HOME/bin:$PATH"
+          echo "PATH=$PATH" >> $GITHUB_ENV # Set PATH for future steps
           bundle install
         env:
           JEKYLL_ENV: production
