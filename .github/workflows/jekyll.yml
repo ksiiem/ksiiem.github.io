@@ -32,8 +32,8 @@ jobs:
           sudo apt-get install -y build-essential libssl-dev libreadline-dev zlib1g-dev
       - name: Install Ruby
         run: |
-          curl -L https://github.com/rbenv/ruby-build/archive/v20230530.tar.gz | tar xz
-          cd ruby-build-20230530/
+          curl -L https://github.com/rbenv/ruby-build/archive/v20231004.tar.gz | tar xz
+          cd ruby-build-20231004/
           sudo PREFIX=/opt/hostedtoolcache/Ruby/3.1.4 ./install.sh
           echo "/opt/hostedtoolcache/Ruby/3.1.4/bin" >> $GITHUB_PATH
           /opt/hostedtoolcache/Ruby/3.1.4/bin/ruby -v
@@ -58,3 +58,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
