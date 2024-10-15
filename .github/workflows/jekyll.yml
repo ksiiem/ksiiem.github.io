@@ -33,33 +33,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Ruby
+        uses: ruby/setup-ruby@5f19ec79cedfadb78ab837f95b87734d0003c899
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+          cache-version: 0
+      - name: Install Bundler
         run: |
-          # Install Ruby and Bundler
           gem install --user-install bundler
-          export GEM_HOME="$HOME/.gem"
-          export PATH="$GEM_HOME/bin:$PATH"
-          echo "GEM_HOME=$GEM_HOME" >> $GITHUB_ENV # Set GEM_HOME for future steps
-          echo "PATH=$PATH" >> $GITHUB_ENV # Set PATH for future steps
-
-      - name: Install dependencies
-        run: |
-          # Ensure the PATH is updated
-          echo "$GEM_HOME/bin" >> $GITHUB_PATH
-          bundle install
-        env:
-          JEKYLL_ENV: production
-
+          echo "${HOME}/.local/share/gem/ruby/3.1.0/bin" >> $GITHUB_PATH
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
-
       - name: Build with Jekyll
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
