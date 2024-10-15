@@ -49,7 +49,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          gem install bundler
+          gem install --user-install bundler
+          export GEM_HOME="$HOME/.gem"
+          export PATH="$GEM_HOME/bin:$PATH"
           bundle install
         env:
           JEKYLL_ENV: production
