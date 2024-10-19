@@ -88,6 +88,96 @@ public class HomeController {
     - 브라우저에 index 요걸 보여주겠다 그걸 이제 스프링이 중간에서 처리를 다 해주는 것. 그래서 이 인덱스 html에는 헬로 스프링부트라는 내용을 출력하게끔 해 놓은 것. 그래서 우리 눈에는 주소로 접속을 했더니 이 내용이 눈에 보여짐
     - 스프링 부트 프로젝트를 만들어서 기본 주소를 요청하는 메서드를 생성. 기본 주소 요청에 대해서 인덱스 html을 띄워줬고 그 인덱스 html은 어떤 내용을 썼느냐 그게 바로 브라우저에 보여짐
 
+# **05_회원가입_회원가입 페이지 요청하기**
+
+![사진](/assets/img/project/member/6.png)
+
+**Index.html**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+    <h2>Hello Spring Boot!!</h2>
+    <a href="/member/save">회원가입</a> <!-- 링크를 클릭하는 것은 전부 http 메서드 중 get 메서드 -->
+    <a href="/member/login">로그인</a>
+</body>
+</html>
+```
+
+- 모든 시작은 인덱스 html에서 시작됨
+- 링크를 클릭하면 그 링크가 컨트롤러로 우리의 서버로 요청이 되고 우리 서버에 이제 컨트롤러에서 그 요청에 해당하는 페이지를 띄움. 회원가입 페이지를 요청하면 회원가입 페이지를 브라우저에 띄워주고 로그인 페이지를 요청하면 로그인 페이지를 띄움
+
+**MemberController.java**
+
+```java
+package com.codingrecipe.member.controller;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller // 스프링 빈으로 등록
+public class MemberController {
+    // 회원가입 페이지 출력 요청
+    @GetMapping("/member/save") // 링크 클릭은 http 메서드 중 get 메서드
+    public String saveForm() {
+        return "save"; // 작성명은 스프링이 templates 폴더에서 save 이름을 찾는다.
+    }
+}
+
+```
+
+- html에서 뭔가를 하면 보통 클라이언트의 요청이 발생했다라고 얘기를 할 수 있는데 요청이 발생을 하면 가장 먼저 받아주는 부분은 컨트롤러라고 생각을 하면 됨. 꼭 홈 컨트롤러일 필요는 없고 여러가지 컨트롤러가 있을 수 있음
+- 그리고 그 중간에는 서블릿이라든지 프론트 컨트롤러라든지 그런 것들이 우리 눈에는 보이진 않지만 그런 것들이 다 스프링에 의해서 다 각자의 어떤 역할을 하고 있음
+- 우리가 회원가입할 때 작성하는 내용은 컨트롤러 그러니까 결국 서버로 요청이 가야 됨. 우리가 회원가입을 하면 그 정보로 그 해당 서비스의 데이터베이스의 그 정보가 저장된다는 그런 원리라고 보면 됨
+
+**save.html**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>save</title>
+</head>
+<body>
+<!-- action 속성: form에 작성한 데이터를 어디로 보낼지 지정 -->
+<form action="/action/save" method="post"> <!-- 주소 -->
+    <!-- name 속성: 서버로 전송할 때 변수이름의 역할. 사용자 작성 내용은 이 변수에 담긴다. -->
+    이메일: <input type="text" name="memberEmail"> <br>
+    비밀번호: <input type="text" name="memberPassword"> <br>
+    이름: <input type="text" name="memberName"> <br>
+    <input type="submit" value="회원가입">
+</form>
+</body>
+</html>
+```
+
+- 폼 안에서 어떤 정보를 어디론가 보낼 때 사용자의 어떤 입력을 받고자 하는 그 부분은 다 인풋 태그가 사용됨필수적으로 적어줘야하는 name 속성은 서버로 쉽게 표현하자면 이게 변수 이름이 되고, 사용자가 작성하는 값은 이 변수에 담겨서 남긴다.
+- 서브밋이라는 속성 값을 주고 밸류를 주게 되면 태그는 버튼처럼 보이고, 버튼을 클릭하면 이메일, 비밀번호, 이름에 작성한 값을 가지고 action 주소로 post 방식으로 간다.
+
+![사진](/assets/img/project/member/7.png)
+
+![사진](/assets/img/project/member/8.png)
+
+![사진](/assets/img/project/member/9.png)
+
+![사진](/assets/img/project/member/10.png)
+
+- 세이브 html에서 작성한 값을 받아주는 메서드가 아직은 없어 에러가 나는 것
+- action 주소로 포스트로 보내는데 컨트롤러에서 지금 현재 주소는 존재하나, 겟으로 받는 부분만 존재함
+- 회원가입 페이지(`/member/save`)를 띄워주는 메서드만 존재함. 주소는 있으나, 받는 방식
+
+![사진](/assets/img/project/member/11.png)
+
+- 주소는 있는데 방식이 다른 거 그런 문제 때문에 생기는 에러. 그래서 스테이터스 코드가 405라는 코드가 발생을 했음
+- 주소가 없다면 404라는 주소가 뜸. 우리 컨트롤러에는 멤버의 로그인이라는 주소를 처리하는 메서드는 없기 때문에 404라는 에러가 뜸
+
 
 <br>
 **참고 자료**
