@@ -178,13 +178,153 @@ public class MemberController {
 - 주소는 있는데 방식이 다른 거 그런 문제 때문에 생기는 에러. 그래서 스테이터스 코드가 405라는 코드가 발생을 했음
 - 주소가 없다면 404라는 주소가 뜸. 우리 컨트롤러에는 멤버의 로그인이라는 주소를 처리하는 메서드는 없기 때문에 404라는 에러가 뜸
 
+# **06_회원가입_입력한 정보 컨트롤러로 전달하기**
+
+![사진](/assets/img/project/member/12.png)
+
+![사진](/assets/img/project/member/13.png)
+
+- 메서드가 호출되면서 콘솔에 찍힌 프린트 문으로 요청이 제대로 가고있음
+- save.html에서 입력한 값을 MemberController.java에서 써야 DB로 전달을 해줄 수 있음
+
+![사진](/assets/img/project/member/14.png)
+
+- @RequestParam을 이용해서 “”에 name 값을 적어준다. “”에 담겨온 값을 String memberEmail에 옮겨담는다.
+    - 네임 속성은 서버로 전송할 때 변수 이름과 같은 역할을 한다. save.html에서 보냈으니까 MemberController.java 입장에서는 받아야 한다. 그냥 받는 것이 아니라 이제 전달해
+    온 걸 받는다는 개념
+
+![사진](/assets/img/project/member/15.png)
+
+- 메서드 호출됐고, save.html에서 입력한 aaa라는 값이 컨트롤러로 잘 넘어오는게 확인이 된다.
+
+**MemberController.java**
+
+```java
+package com.codingrecipe.member.controller;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller // 스프링 빈으로 등록
+public class MemberController {
+    // 회원가입 페이지 출력 요청
+    @GetMapping("/member/save") // 링크 클릭은 http 메서드 중 get 메서드
+    public String saveForm() {
+        return "save"; // 작성명은 스프링이 templates 폴더에서 save 이름을 찾는다.
+    }
+
+    @PostMapping("/member/save")
+    public String save(@RequestParam("memberEmail") String memberEmail,
+                       @RequestParam("memberPassword") String memberPassword,
+                       @RequestParam("memberName") String memberName) {
+        System.out.println("MemberController.save"); // soutm: 현재 메서드를 프린트 문으로 작성. 메서드 호출 확인
+        System.out.println("memberEmail = " + memberEmail + ", memberPassword = " + memberPassword + ", memberName = " + memberName);
+                                                     // soutp: 매개변수를 자동완성으로 프린트 문으로 만들어주는 단축키
+        return "index";
+    }
+}
+
+```
+
+# **07_회원가입_DB 연동하기**
+
+![사진](/assets/img/project/member/16.png)
+
+![사진](/assets/img/project/member/17.png)
+
+- member 패키지에서 service, repository, dto, entity 패키지 생성
+- 컨트롤러는 컨트롤러끼리 서비스는 서비스끼리 이렇게 모아 놓는 것이 일반적인 코딩 방식이기 때문에 패키지를 구분을 해서 사용
+
+memberDTO.java
+
+```java
+package com.codingrecipe.member.dto;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter // 롬복 라이브러리가 제공해주는 어노테이션
+@Setter
+@NoArgsConstructor
+@ToString
+public class MemberDTO {
+    private Long id;
+    private String memberEmail;
+    private String memeberPassword;
+    private String memberName;
+}
+
+```
+
+- dto라는 클래스는 이제 회원 정보에 필요한 내용들을 필드로 정의를 할 것. 그 필드에 대해서 보통 일반적으로 코딩하는 규칙은 이제 이 클래스의 필드를 모두 다 프라이빗으로 감싸 감춘다라고 많이 표현을 함
+- 그래서 이 필드를 사용하기 위해서는 게터 또는 세터 이런 메서드를 이용해서 간접적으로 필드 값을 사용하도록 함
+- 보통은 필드를 선언하고 우리가 게터, 세터를 각각에 대해서 만들어 줘야 되는데, 이 롬복이라는 라이브러리는 어노테이션만 하나 붙여줌으로 인해서 이 각각의 필드에 대한 게터, 세터를 자동으로 만들어 주는 역할을 함
+- NoArgsConstructor라는 것은 기본 생성자를 자동으로 만들어주는 기능이 있음. 또 비슷한 것으로 AllArgsConstructor는 필드를 모두 다 매개변수로 하는 생성자를 만들어줌
+- dto 객체가 가지고 있는 어떤 필드 값을 출력할 때 보통 toString을 많이 사용을 하는데 toString 메서드를 자동으로 만들어주는 롬복 어노테이션임
+- 이렇게 어노테이션만 잘 붙여주고 그 다음에 필드를 선언을 해주면 필요한 것들이 다 생긴다 이렇게 생각을 하면 됨
+
+**MemberDTO.java**
+
+```java
+package com.codingrecipe.member.controller;
+
+import com.codingrecipe.member.dto.MemberDTO;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller // 스프링 빈으로 등록
+public class MemberController {
+    // 회원가입 페이지 출력 요청
+    @GetMapping("/member/save") // 링크 클릭은 http 메서드 중 get 메서드
+    public String saveForm() {
+        return "save"; // 작성명은 스프링이 templates 폴더에서 save 이름을 찾는다.
+    }
+
+    @PostMapping("/member/save")
+    public String save(**@ModelAttribute MemberDTO MemberDTO**) { // 스프링이 제공해주는 어노테이션
+        System.out.println("MemberController.save"); // soutm: 현재 메서드를 프린트 문으로 작성. 메서드 호출 확인
+        **System.out.println("MemberDTO = " + MemberDTO);** // soutp: 매개변수를 자동완성으로 프린트 문으로 만들어주는 단축키
+        return "index";
+    }
+}
+
+```
+
+- 그래서 다시 컨트롤러(MemberController)로 돌아오면 우리가 각각의 파라미터를 String 변수(String memberEmail, String memberPassword, String memberName)로 받아서 서비스 클래스로 넘겨주고 서비스 클래스에서는 레파지토리로 넘겨주고 레파지토리에서는 데이터베이스로 넘기는 그런 작업을 해야만 우리의 웹페이지의 회원가입 페이지에서 사용자가 입력한 그 회원 정보가 데이터베이스로 저장이 된다 그런 과정을 지금 진행 중에 있음
+
+![사진](/assets/img/project/member/18.png)
+
+- dto의 이메일, 패스워,드 네임이 필드 값이 잘 담겨서 옴. 이제 이게 가능한 이유는 중간에 스프링이 우리가 매개변수로 dto클래스 타입으로 매개변수를 정해주면 네임 속성과  dto의 필드가 동일하다면 알아서 스프링이 dto의 세터 메서드들을 각각 호출하면서 작성한 값을 알아서 담아줌
+- ModelAttribute도 생략은 가능함. 오히려 명시적으로 이것을 썼다는 것이 더 보기도 쉽고 ModelAttribute가 갖는 또 여러 가지 기능들이 있어 쓰는 게 좋음
+- 파라미터가 많아질수록 코드 양이라든지,그리고 또 많아지면 분명히 놓치는 것도 생기기도 하고 그렇기 때문에 훨씬 더 좋음
+- dto 객체에 save.html에서 작성한 값을 제대로 전달을 받고 있음
+
+```java
+// 예시
+MemberService memberService = new MemberService();
+memberService.save();
+```
+
+- 전달 받은 값을 서비스클래스, 이제 계속 DB까지 전달하는 그 과정을 처리를 해야 함
+MemberService 객체를 하나 만들어서 그 MemberService가 가지고 있는 어떤 특정 메서드들을 이렇게 호출하는 방식을 스프링에서는 이런 식의 객체 생성 방식을 잘 쓰지 않는다.
+- 아예 안 쓰는 건 아니지만, 이런 컨트롤러 클래스에서 서비스 클래스로 뭔가를 넘길 때 메서드를 호출할 때는 @Controller, @Service, @Repository 이런 거를 붙여 준다는게 스프링이 관리하는 객체로 등록을 한다고 했었는데,
+- 스프링이 관리하는 객체를 편하게 쓸 수 있는 방법이 있음. 그래서 그거를 객체를 주입 받는다라고 하는데, 객체 주입 방식은 크게 3가지가 있고 여기서는 생성자 주입이라는 방식을 사용을 하려고 함
 
 <br>
 **참고 자료**
 
 ---
 
-- https://www.youtube.com/watch?v=RhM1bQ76Tv0&list=PLV9zd3otBRt5ANIjawvd-el3QU594wyx7
+- <https://www.youtube.com/watch?v=RhM1bQ76Tv0&list=PLV9zd3otBRt5ANIjawvd-el3QU594wyx7>
 - [https://commnetall.tistory.com/106 - Intellij](https://commnetall.tistory.com/106)
 - [https://velog.io/@codingrecipe/SpringBoot-Spring-Initializr로-프로젝트-만들기](https://velog.io/@codingrecipe/SpringBoot-Spring-Initializr%EB%A1%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%A7%8C%EB%93%A4%EA%B8%B0)
 - [https://velog.io/@codingrecipe/mysql-설치하기](https://velog.io/@codingrecipe/mysql-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
