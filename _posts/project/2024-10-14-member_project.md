@@ -238,7 +238,7 @@ public class MemberController {
 - member 패키지에서 service, repository, dto, entity 패키지 생성
 - 컨트롤러는 컨트롤러끼리 서비스는 서비스끼리 이렇게 모아 놓는 것이 일반적인 코딩 방식이기 때문에 패키지를 구분을 해서 사용
 
-memberDTO.java
+**memberDTO.java**
 
 ```java
 package com.codingrecipe.member.dto;
@@ -318,6 +318,123 @@ memberService.save();
 MemberService 객체를 하나 만들어서 그 MemberService가 가지고 있는 어떤 특정 메서드들을 이렇게 호출하는 방식을 스프링에서는 이런 식의 객체 생성 방식을 잘 쓰지 않는다.
 - 아예 안 쓰는 건 아니지만, 이런 컨트롤러 클래스에서 서비스 클래스로 뭔가를 넘길 때 메서드를 호출할 때는 @Controller, @Service, @Repository 이런 거를 붙여 준다는게 스프링이 관리하는 객체로 등록을 한다고 했었는데,
 - 스프링이 관리하는 객체를 편하게 쓸 수 있는 방법이 있음. 그래서 그거를 객체를 주입 받는다라고 하는데, 객체 주입 방식은 크게 3가지가 있고 여기서는 생성자 주입이라는 방식을 사용을 하려고 함
+
+**MemberController.java**
+
+```java
+package com.codingrecipe.member.controller;
+
+import com.codingrecipe.member.dto.MemberDTO;
+import com.codingrecipe.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller // 스프링 빈으로 등록
+@RequiredArgsConstructor // 롬복이 제공하는 어노테이션
+public class MemberController {
+    // 생성자 주입
+    **private final MemberService memberService;** // 이 필드를 매개변수로 하는 컨트롤러(MemberController) 생성자를 @@RequiredArgsConstructor가 만들어줌
+                                               // 이 클래스(MemberController)에 대한 객체를 스프링 빈으로 등록을 할 때 자동적으로 이 서비스 클래스(MemberService)에 대한 객체를 주입 받는다.
+
+    // 회원가입 페이지 출력 요청
+    @GetMapping("/member/save") // 링크 클릭은 http 메서드 중 get 메서드
+    public String saveForm() {
+        return "save"; // 작성명은 스프링이 templates 폴더에서 save 이름을 찾는다.
+    }
+
+    @PostMapping("/member/save")
+    public String save(@ModelAttribute MemberDTO MemberDTO) { // 스프링이 제공해주는 어노테이션
+        System.out.println("MemberController.save"); // soutm: 현재 메서드를 프린트 문으로 작성. 메서드 호출 확인
+        System.out.println("MemberDTO = " + MemberDTO); // soutp: 매개변수를 자동완성으로 프린트 문으로 만들어주는 단축키
+        **memberService.save(MemberDTO);**
+        return "index";
+    }
+}
+
+```
+
+- 주입을 받는다라는 건 컨트롤러 클래스가 서비스 클래스의 자원. 즉, 메서드나 필드나 이런 것들을 사용할
+수 있게 되는 권한이 생긴다라고 생각을 하면 됨
+
+![사진](/assets/img/project/member/19.png)
+
+- 클릭을 해보면 서비스 클래스에 세이브라는 메서드가 아까 우리가 호출했던 방식을 따르는 형태로 만들어진다.
+
+**MemberService.java**
+
+```java
+package com.codingrecipe.member.service;
+
+import com.codingrecipe.member.dto.MemberDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service // 스프링이 관리해주는 객체 즉, 스프링 빈으로 등록을 시킴
+**@RequiredArgsConstructor**
+public class MemberService {
+    **private final MemberRopository memberRopository;** 
+
+    **public void save(MemberDTO memberDTO) {
+    }**
+}
+
+```
+
+- 그러면 서비스 클래스에서는 리파지토리 클래스를 호출을 해야 되는데 마찬가지로 똑같은 방식을 사용한다. @RequiredArgsConstructor를 쓰고,  프라이빗 파이널 멤버 지금 멤버 리파지토리를 아직 많이 들지 않아서 빨간색이 뜬다.
+- 리파지토리를 만들기 전에 작업을 해야 될 부분이 있다.
+
+**build.gradle**
+
+```groovy
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.codingrecipe'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	**implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'mysql:mysql-connector-java'**
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+```
+
 
 <br>
 **참고 자료**
