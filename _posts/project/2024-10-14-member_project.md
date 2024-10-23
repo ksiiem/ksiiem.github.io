@@ -435,6 +435,36 @@ tasks.named('test') {
 
 ```
 
+- 스프링 데이터 jpa라는 디펜던시와 mysql이라는 디펜던시 두 가지를 추가를 할 것이다. 새로운 디펜던스를 추가를 하게 되면 인텔리제이에서는 코끼리 모양 아이콘이 하나가 뜬다. 반드시 클릭해서 라이브러리를 업데이트를 해야한다. 그래야 우리가 사용하고자 하는 디펜던시에 대한 라이브러리를 이 gradle이 다운로드를 받아서 우리가 라이브러리를 사용을 할 수 있게 세팅을 해준다.
+- db를 사용해야 되기 때문에 이제 곧 db와 관계된 세팅이 좀 추가가 된다라고 보면 된다.
+
+```yaml
+server:
+  port: 8081
+
+# database 연동 설정
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    각자 PC에 만들어놓은 Database이름을 써야 한다.
+    url: jdbc:mysql://localhost:3306/**db_codingrecipe**?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    #    mysql에 생성한 사용자 계정 정보를 써야 한다.
+    username: **user_codingrecipe**
+    password: **1234**
+  thymeleaf:
+    cache: false
+
+  # spring data jpa 설정
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+```
+
+- appplication.yaml를 이제 조금 더 써야 한다. 처음에 이 부분이 db와 관계된 부분을 할 때 좀 사용이 될거다라고 말했는데, 이 부분도 일단 각자 PC 그 mysql이 분명히 깔려 있어야 되고, mysql에서 데이터베이스를 생성을 해야 하는데 그 데이터베이스 이름을 여기(db_codingrecipe) 쓴다.
+- username과 password는 mysql에 생성한 사용자 계정 정보를 써야 한다.
 
 <br>
 **참고 자료**
