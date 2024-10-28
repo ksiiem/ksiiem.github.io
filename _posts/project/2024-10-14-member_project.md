@@ -377,7 +377,7 @@ import org.springframework.stereotype.Service;
 @Service // 스프링이 관리해주는 객체 즉, 스프링 빈으로 등록을 시킴
 **@RequiredArgsConstructor**
 public class MemberService {
-    **private final MemberRopository memberRopository;** 
+    **private final MemberRepository memberRepository;** 
 
     **public void save(MemberDTO memberDTO) {
     }**
@@ -458,7 +458,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
-    show-sql: true
+    show-sql: true  # 콘솔 창에서 메시지들을 처리되는 과정들을 본다.
     hibernate:
       ddl-auto: update
 ```
@@ -466,33 +466,100 @@ spring:
 - appplication.yaml를 이제 조금 더 써야 한다. 처음에 이 부분이 db와 관계된 부분을 할 때 좀 사용이 될거다라고 말했는데, 이 부분도 일단 각자 PC 그 mysql이 분명히 깔려 있어야 되고, mysql에서 데이터베이스를 생성을 해야 하는데 그 데이터베이스 이름을 여기(db_codingrecipe) 쓴다.
 - username과 password는 mysql에 생성한 사용자 계정 정보를 써야 한다.
 
+```sql
+// 데이터베이스 생성 명령어 create database 데이터베이스이름;
+create database db_codingrecipe;
+
+// 사용자 생성 명령어
+create user user_codingrecipe@localhost identified by '1234';
+grant all privileges on db_codingrecipe.* to user_codingrecipe@localhost;
+```
+
 - mysql를 설치하고 루트 계정으로 접속을 해서 데이터베이스도 만들고, 사용자도 만들고 이런 작업들을 할 수가 있다. 데이터베이스를 만드는 명령어와 사용자를 생성하는 명령어는 이렇게 하면 된다.
-    
-    ```sql
-    // 데이터베이스 생성 명령어
-    create database 데이터베이스이름;
-    // create database db_codingrecipe;
-    
-    // 사용자 생성 명령어
-    create user user_codingrecipe@localhost identified by '1234';
-    ```
-    
-    - 계정의 이름 골뱅이 앞부분만user_codingrecipe 이 부분이 어떻게 보면 아이디 같은 뭐 유저네임 같은 거라고 보면 된다.
+    - 계정의 이름 골뱅이 앞부분만. user_codingrecipe 이 부분이 어떻게 보면 아이디 같은 뭐 유저네임 같은 거라고 보면 된다.
     - @localhost 서버의 위치 주소를 정하는 건데 대부분이 각자 개인 pc로 하는 경우가 많을 것이다. 그래서 그냥 골뱅이 로컬 호스트로 정하면 큰 문제 없이 사용을 할 수 있다.
     - identified by 뒤에 붙어 있는요 부분이 비밀번호다.
-    - 계정과 비밀번호를 이렇게 동시에 지정을 한다고 보면 되고, 마지막으로 하나 더 해야 되는 것은 새로 만든 사용자(user_codingrecipe)가 이 데이터베이스(db_codingrecipe)를 사용할 수 있게끔 데이터베이스는 권한 설정하는 부분들이 있는데 권한을 읽기 쓰기 권한 뭐 이런 것들을 다 구체적으로 원래 구분을 해서 쓰지만 지금 우리는 연습을 하는 것이기 때문에 모든 권한을 부여하는 형식으로 사용자에게 이 데이터베이스에 모든 권한을 준다는 명령어라고 보면 된다.
-    - 각각을 실행을 해야 하는데 보통은 컨트롤 엔터키로 실행이 된다.
-- 유저 네임을 입력하고, Connection Name는 보여지는 이름,  알아보기 쉬운 어떤 구분용 이름이라고 보면 된다. 이렇게 쓴 다음에 Test Connection을 클릭을 하게 되면 비밀번호를 물어본다. Save password in keychain 체크박스해서 비밀번호 입력하면 그 다음부터는 비밀번호를 묻지 않는다.
-- 디폴트 스키마라는 부분은 이 계정으로 접속을 했을 때 기본적으로 사용하는 데이터베이스가 뭐냐를 여기서 설정을 할 수 있다. 그래서 여기에 우리가 조금 전에 만들었던 DB 언더바 코딩 레시피 이런 데이터베이스 이름을 써주면 하나의 작업을 줄일 수 있다.
-- mysql은 데이터베이스를 항상 사용을 먼저 해준다는 명령을 실행을 해 줘야 한다. 
-    
-    ```sql
-    use db_codingrecipe
-    ```
-    
-    - 그래야 셀렉트 쿼리를 수행한다든지 크리에이트 쿼리를 수행하는 이런 것들이 이제 가능하다. 그런데 아까 디폴트 스키마에다가 DB 언더바 코딩 레시피 이런 데이터베이스 이름을 써 놓게 되면 작업을 생략을 해도 된다. 무조건 db_codingrecipe가 사용이 된다라고 mysql workbench가 자동 설정을 해주기 때문에 생략이 가능하다.
+    - 계정과 비밀번호를 이렇게 동시에 지정을 한다고 보면 되고, 마지막으로 하나 더 해야 되는 것은 새로 만든 사용자(user_codingrecipe)가 이 데이터베이스(db_codingrecipe)를 사용할 수 있게끔 데이터베이스는 권한 설정하는 부분들이 있는데, 권한을 읽기 쓰기 권한 뭐 이런 것들을 다 구체적으로 원래 구분을 해서 쓰지만 지금 우리는 연습을 하는 것이기 때문에 모든 권한을 부여하는 형식으로 사용자에게 이 데이터베이스에 모든 권한을 준다는 명령어라고 보면 된다.
 
-<br>
+![사진](/assets/img/project/member/20.png)
+
+- 각각을 실행을 해야 하는데 보통은 컨트롤 엔터키로 실행이 된다.
+    
+    
+
+![사진](/assets/img/project/member/21.png)
+
+- 접속 정보를 추가하는 부분에서 유저 네임을 입력하고, Connection Name는 보여지는 이름,  알아보기 쉬운 어떤 구분용 이름이라고 보면 된다. 이렇게 쓴 다음에 Test Connection을 클릭을 하게 되면 비밀번호를 물어본다. Save password in keychain 체크박스해서 비밀번호 입력하면 그 다음부터는 비밀번호를 묻지 않는다.
+
+![사진](/assets/img/project/member/22.png)
+
+- 디폴트 스키마라는 부분은 이 계정으로 접속을 했을 때 기본적으로 사용하는 데이터베이스가 뭐냐를 여기서 설정을 할 수 있다. 그래서 여기에 우리가 조금 전에 만들었던 DB 언더바 코딩 레시피 이런 데이터베이스 이름을 써주면 하나의 작업을 줄일 수 있다.
+
+```sql
+use db_codingrecipe
+```
+
+- mysql은 데이터베이스를 항상 사용을 먼저 해준다는 명령을 실행을 해 줘야 한다. 그래야 셀렉트 쿼리를 수행한다든지 크리에이트 쿼리를 수행하는 이런 것들이 이제 가능하다. 그런데 아까 디폴트 스키마에다가 DB 언더바 코딩 레시피 이런 데이터베이스 이름을 써 놓게 되면 작업을 생략을 해도 된다. 무조건 db_codingrecipe가 사용이 된다라고 mysql workbench가 자동 설정을 해주기 때문에 생략이 가능하다.
+
+![사진](/assets/img/project/member/23.png)
+
+```java
+package com.codingrecipe.member.repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
+}
+
+```
+
+- 리파짓토리 패키지에 MemberRepository 인터페이스를 하나 추가
+
+![사진](/assets/img/project/member/24.png)
+
+- 엔티티 패키지에 MemberEntity 클래스 추가
+    - 엔티티 클래스가 일종의 이제 테이블 역할을 하게 된다. 당연히 테이블이 있고 자바 클래스나 이제 그 메소드를 이용해서 어떤 쿼리를 쓰는 그리고 쿼리를 전송해서 테이블과의 그 어떤 crud 작업을 한다 이렇게 생각을 하게 되는데, 스프링 데이터 jpa라는 것은 데이터베이스의 테이블을 일종의 자바 객체처럼 이제 활용을 할 수 있도록 해주는게 가장 큰 특징이다.
+    - 테이블 이름 member_table에 이제 이런 형식을 갖는 컬럼들이 생성이 돼서 이 스프링 데이터 jpa가 어떤 데이터베이스 테이블을 알아서 db에다가 만들어 준다. application.yaml에 우리가 아까 url에 정의한 데이터베이스 db_codingrecipe에다가
+
+![사진](/assets/img/project/member/25.png)
+
+- MemberRepository 인터페이스에서 MemberEntity 클래스 임포트
+
+**MemberRepository.java**
+
+```java
+package com.codingrecipe.member.repository;
+
+import com.codingrecipe.member.entity.MemberEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
+}
+```
+
+![사진](/assets/img/project/member/26.png)
+
+- MemberService 클래스에서 MemberRepository 클래스 임포트
+
+**MemberService.java**
+
+```java
+package com.codingrecipe.member.service;
+
+import com.codingrecipe.member.dto.MemberDTO;
+import com.codingrecipe.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service // 스프링이 관리해주는 객체 즉, 스프링 빈으로 등록을 시킴
+@RequiredArgsConstructor
+public class MemberService {
+    private final MemberRepository memberRepository;
+
+    public void save(MemberDTO memberDTO) {
+    }
+}
+```
+
 **참고 자료**
 
 ---
