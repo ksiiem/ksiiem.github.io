@@ -516,6 +516,34 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
 ![사진](/assets/img/project/member/24.png)
 
+```java
+package com.codingrecipe.member.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity // 엔티티라는 걸 정의함. Entity 클래스 사용 가능
+@Setter // 롬복에서 제공하는 게터, 세터
+@Getter
+@Table(name = "member_table") // db에 실제로 이 클래스에 정의한 대로 테이블이 생성이 된다. 생성되었을 때의 테이블 이름을 정하는 부분
+public class MemberEntity {
+
+    @Id // pk 지정(우리가 보통 테이블을 정의할 때는 pk, 프라이머리키 컬럼이 있다. PK를 정의할 때 이 Id룰 씀)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // mysql에서는 얘가 auto_increment를 지정해주는 부분임. 오라클 같은 경우는 시퀀스 역할
+    private Long id;
+
+    @Column(unique = true) // 일반 컬럼 지정, 유니크 제약조건 추가
+    private String memberEmail;
+
+    @Column
+    private String memeberPassword;
+
+    @Column
+    private String memberName;
+}
+
+```
 - 엔티티 패키지에 MemberEntity 클래스 추가
     - 엔티티 클래스가 일종의 이제 테이블 역할을 하게 된다. 당연히 테이블이 있고 자바 클래스나 이제 그 메소드를 이용해서 어떤 쿼리를 쓰는 그리고 쿼리를 전송해서 테이블과의 그 어떤 crud 작업을 한다 이렇게 생각을 하게 되는데, 스프링 데이터 jpa라는 것은 데이터베이스의 테이블을 일종의 자바 객체처럼 이제 활용을 할 수 있도록 해주는게 가장 큰 특징이다.
     - 테이블 이름 member_table에 이제 이런 형식을 갖는 컬럼들이 생성이 돼서 이 스프링 데이터 jpa가 어떤 데이터베이스 테이블을 알아서 db에다가 만들어 준다. application.yaml에 우리가 아까 url에 정의한 데이터베이스 db_codingrecipe에다가
