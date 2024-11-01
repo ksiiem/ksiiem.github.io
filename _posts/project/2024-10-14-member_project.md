@@ -255,7 +255,7 @@ import lombok.ToString;
 public class MemberDTO {
     private Long id;
     private String memberEmail;
-    private String memeberPassword;
+    private String memberPassword;
     private String memberName;
 }
 
@@ -537,7 +537,7 @@ public class MemberEntity {
     private String memberEmail;
 
     @Column
-    private String memeberPassword;
+    private String memberPassword;
 
     @Column
     private String memberName;
@@ -588,6 +588,90 @@ public class MemberService {
 }
 ```
 
+**MemberService.java**
+
+```java
+package com.codingrecipe.member.service;
+
+import com.codingrecipe.member.dto.MemberDTO;
+import com.codingrecipe.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service // 스프링이 관리해주는 객체 즉, 스프링 빈으로 등록을 시킴
+@RequiredArgsConstructor
+public class MemberService {
+    private final MemberRepository memberRepository;
+
+    public void save(MemberDTO memberDTO) {
+    }
+}
+```
+
+## **인텔리제이 Lombok 설치 방법**
+
+### 1. Lombok 설치하기
+
+File → Settings → Plugins → Marketplace에 lombok을 검색하고 설치해 준다. 참고로 IntelliJ 2020.03 이후 버전에서는 기본 Plugin으로 Lombok이 설치되어 있다.
+
+롬복(Lombok)은 자바 클래스에서 반복적으로 작성되는 getter, setter, toString, 생성자 코드 등의 소스들을, 어노테이션(Annotation)을 사용하여 생략할 수 있도록 컴파일 시점에 자동으로 생성해주는 라이브러리이다.
+
+![사진](/assets/img/project/member/27.png)
+
+### **2. Dependency 설정하기**
+
+```groovy
+dependencies {
+    # lombok plugin
+    implementation('org.projectlombok:lombok')
+    annotationProcessor('org.projectlombok:lombok')    
+
+    # test 환경
+    testImplementation('org.projectlombok:lombok')
+    testAnnotationProcessor('org.projectlombok:lombok')    
+}
+```
+
+### **3. Lombok 어노테이션 활성화 하기**
+
+![사진](/assets/img/project/member/28.png)
+
+- 인텔리제이에서 어노테이션 프로세싱 활성화를 해주어야 어노테이션 기반인 lombok을 사용할 수 있다. File > Settings > Build, Execution, Deployment > Compiler > Annotation Processors로 이동하여 Enable annotation processing을 활성화해준다.
+
+![사진](/assets/img/project/member/29.png)
+
+**MySQL 8.0.31** 버전부터 **groupId**와 **artifactId**가 변경되었다고 한다.
+
+**MySQL 8.0.31 이전 버전**
+
+```xml
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-java</artifactId>
+```
+
+**MySQL 8.0.31 이후 버전**
+
+```xml
+<groupId>com.mysql</groupId>
+<artifactId>mysql-connector-j</artifactId>
+```
+
+![사진](/assets/img/project/member/30.png)
+
+따라서 변경된 Id에 맞게 build.gradle 을 아래와 같이 수정해주면 된다.
+
+```groovy
+runtimeOnly 'com.mysql:mysql-connector-j'
+```
+
+![사진](/assets/img/project/member/31.png)
+
+![사진](/assets/img/project/member/32.png)
+
+hibernate 6 이상에서는 더이상 특정 버전별 dialect를 사용하지 않기 때문에 나오는 에러라고 한다. 따라서 application.yml의 jpa.database-platform에 작성한 'org.hibernate.dialect.MySQL5InnoDBDialect' 대신 'org.hibernate.dialect.MySQLDialect'로 작성하면 정상적으로 작동하는 것을 볼 수 있다.
+
+
+<br>
 **참고 자료**
 
 ---
