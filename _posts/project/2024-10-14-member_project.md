@@ -608,15 +608,15 @@ public class MemberService {
 }
 ```
 
-## **인텔리제이 Lombok 설치 방법**
-
-### 1. Lombok 설치하기
-
-File → Settings → Plugins → Marketplace에 lombok을 검색하고 설치해 준다. 참고로 IntelliJ 2020.03 이후 버전에서는 기본 Plugin으로 Lombok이 설치되어 있다.
+## **인텔리제이 Lombok 설치**
 
 롬복(Lombok)은 자바 클래스에서 반복적으로 작성되는 getter, setter, toString, 생성자 코드 등의 소스들을, 어노테이션(Annotation)을 사용하여 생략할 수 있도록 컴파일 시점에 자동으로 생성해주는 라이브러리이다.
 
+### 1. Lombok 설치하기
+
 ![사진](/assets/img/project/member/27.png)
+
+- File → Settings → Plugins → Marketplace에 lombok을 검색하고 설치해 준다. 참고로 IntelliJ 2020.03 이후 버전에서는 기본 Plugin으로 Lombok이 설치되어 있다.
 
 ### **2. Dependency 설정하기**
 
@@ -640,7 +640,7 @@ dependencies {
 
 ![사진](/assets/img/project/member/29.png)
 
-**MySQL 8.0.31** 버전부터 **groupId**와 **artifactId**가 변경되었다고 한다.
+- **MySQL 8.0.31** 버전부터 **groupId**와 **artifactId**가 변경되었다고 한다.
 
 **MySQL 8.0.31 이전 버전**
 
@@ -658,7 +658,7 @@ dependencies {
 
 ![사진](/assets/img/project/member/30.png)
 
-따라서 변경된 Id에 맞게 build.gradle 을 아래와 같이 수정해주면 된다.
+- 따라서 변경된 Id에 맞게 build.gradle을 아래와 같이 수정해주면 된다.
 
 ```groovy
 runtimeOnly 'com.mysql:mysql-connector-j'
@@ -668,8 +668,13 @@ runtimeOnly 'com.mysql:mysql-connector-j'
 
 ![사진](/assets/img/project/member/32.png)
 
-hibernate 6 이상에서는 더이상 특정 버전별 dialect를 사용하지 않기 때문에 나오는 에러라고 한다. 따라서 application.yml의 jpa.database-platform에 작성한 'org.hibernate.dialect.MySQL5InnoDBDialect' 대신 'org.hibernate.dialect.MySQLDialect'로 작성하면 정상적으로 작동하는 것을 볼 수 있다.
+- hibernate 6 이상에서는 더이상 특정 버전별 dialect를 사용하지 않기 때문에 나오는 에러라고 한다. 따라서 -application.yml의 jpa.database-platform에 작성한 'org.hibernate.dialect.MySQL5InnoDBDialect' 대신 'org.hibernate.dialect.MySQLDialect'로 작성하면 정상적으로 작동하는 것을 볼 수 있다.
 
+![사진](/assets/img/project/member/33.png)
+
+![사진](/assets/img/project/member/34.png)
+
+- 에러는 다 아마 해결이 될 것이고, 이 상태에서 한번 실행을 하고 DB로 먼저 확인 한번 해보면 조금 전에는 멤버 테이블이라는 테이블이 없었는데 우리가 만든 mysql workbench에서 select * from member_table;을 실행을 해서 우리의 데이터베이스를 한번 확인을 해 보면 id, member_email, member_name, member_password 컬럼을 갖는 비어 있는 테이블이 하나 만들어진 걸 확인할 수가 있다. 이게 바로 엔티티 클래스에 의해서 테이블이 만들어지는 거라고 보면 된다. 아직은 회원가입 정보가 여기에 저장되는 내용은 하지 않은 상태다.
 
 <br>
 **참고 자료**
