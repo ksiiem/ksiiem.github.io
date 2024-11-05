@@ -676,6 +676,40 @@ runtimeOnly 'com.mysql:mysql-connector-j'
 
 - 에러는 다 아마 해결이 될 것이고, 이 상태에서 한번 실행을 하고 DB로 먼저 확인 한번 해보면 조금 전에는 멤버 테이블이라는 테이블이 없었는데 우리가 만든 mysql workbench에서 select * from member_table;을 실행을 해서 우리의 데이터베이스를 한번 확인을 해 보면 id, member_email, member_name, member_password 컬럼을 갖는 비어 있는 테이블이 하나 만들어진 걸 확인할 수가 있다. 이게 바로 엔티티 클래스에 의해서 테이블이 만들어지는 거라고 보면 된다. 아직은 회원가입 정보가 여기에 저장되는 내용은 하지 않은 상태다.
 
+![사진](/assets/img/project/member/35.png)
+
+이 경고 메시지는 Hibernate가 `hibernate.dialect` 속성에 대해 더 이상 MySQLDialect를 명시적으로 설정할 필요가 없다는 의미이다. Hibernate가 MySQL 데이터베이스와 함께 사용할 때 자동으로 적합한 방언을 선택하기 때문에 이 속성을 제거해도 문제가 없다는 경고다. 이를 해결하려면 `application.properties` 또는 `application.yml` 파일에서 다음 설정을 제거하면 된다.
+
+**application.yml**
+
+```yaml
+# server 설정
+server:
+  port: 8081
+
+# database 연동 설정
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    각자 PC에 만들어놓은 Database이름을 써야 한다.
+    url: jdbc:mysql://localhost:3306/db_codingrecipe?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    #    mysql에 생성한 사용자 계정 정보를 써야 한다.
+    username: user_codingrecipe
+    password: 1234
+
+  thymeleaf:
+    cache: false
+
+  # spring data jpa 설정
+  jpa:
+	  # spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect 제거
+    open-in-view: false
+    show-sql: true # 콘솔 창에서 메시지들을 처리되는 과정들을 본다.
+    hibernate:
+      ddl-auto: update
+
+```
+
 <br>
 **참고 자료**
 
