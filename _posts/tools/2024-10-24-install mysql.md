@@ -9,7 +9,7 @@ categories: [Tools, "DB"]
     
 2.  Mac 사용자는 Mysql community Server, Mysql Workbench를 각각 다운받아 설치하면 된다. 윈도우 사용자는 MySQL Installer for Windows를 클릭한다.
     
-    !![image.png](/assets/img/tools/1.png)
+    ![image.png](/assets/img/tools/1.png)
     
 3. 다운로드 페이지에서 아래에 있는 것으로 다운 받는다.
     
