@@ -710,6 +710,78 @@ spring:
 
 ```
 
+## MySQL 데이터베이스와의 연결
+
+MySQL 데이터베이스와의 연결이 올바르게 설정되었는지 확인하는 방법은 여러 가지가 있다. 아래 방법들을 통해 문제를 진단해 볼 수 있다.
+
+### 1. 콘솔에서 확인 (로그 확인)
+
+Spring Boot 애플리케이션을 실행하면, 연결 성공 여부에 대한 로그가 콘솔에 출력된다. 성공적으로 연결되면 다음과 같은 로그가 표시된다.
+
+- `HikariPool-1 - Start completed.`
+- `Added connection com.mysql.cj.jdbc.ConnectionImpl` 등의 메시지가 나타난다.
+
+이와 반대로 오류가 발생할 경우에는 `Access denied for user` 또는 `Unknown database` 등의 에러 메시지가 표시되며 연결에 실패했음을 알려준다.
+
+### 2. `application.yml` 파일 설정 확인
+
+- **URL 확인**: `spring.datasource.url` 항목의 URL이 MySQL 서버와 데이터베이스에 정확하게 연결되도록 되어 있는지 확인한다.
+- **계정 정보 확인**: `spring.datasource.username`과 `spring.datasource.password`가 올바른지 확인한다. 계정 정보가 잘못되어 있으면 연결이 거부된다.
+
+### 3. MySQL 클라이언트에서 직접 연결 테스트
+
+터미널이나 명령 프롬프트, 혹은 MySQL Workbench와 같은 GUI 도구에서 데이터베이스에 직접 접속해 보는 방법이다.
+
+### 터미널 또는 명령 프롬프트에서 접속 테스트:
+
+```bash
+mysql -u user_codingrecipe -p -h localhost -P 3306
+```
+
+- `user_codingrecipe`는 MySQL에서 생성한 사용자 이름이다.
+- `p` 옵션은 비밀번호를 묻기 위한 옵션이며, 프롬프트에서 비밀번호를 입력하면 된다.
+- `localhost`는 서버의 호스트 이름이고, `3306`은 기본 MySQL 포트이다.
+
+예시:
+
+```bash
+mysql -u user_codingrecipe -p
+Enter password: 1234
+```
+
+정상적으로 연결되면 MySQL 쉘이 나타나고 데이터베이스에 접근할 수 있다. 오류가 발생하면 다음과 같은 메시지가 나타날 수 있다:
+
+- `Access denied for user`: 사용자 이름 또는 비밀번호 오류.
+- `Unknown database 'db_codingrecipe'`: 데이터베이스 이름 오류.
+
+### 4. MySQL Workbench로 연결 확인
+
+MySQL Workbench와 같은 GUI 도구를 사용 중이라면 다음 절차를 따라 데이터베이스 연결을 테스트할 수 있다:
+
+1. MySQL Workbench를 실행하고 `New Connection`을 선택한다.
+2. 호스트명, 포트, 사용자 이름, 비밀번호를 입력하고 `Test Connection` 버튼을 클릭한다.
+3. 연결에 성공하면 성공 메시지가 나타나며, 실패하면 오류 원인을 알려준다.
+
+### 5. Spring Boot 애플리케이션에서 테스트 쿼리 작성
+
+Spring Boot 애플리케이션에서 직접 SQL 쿼리를 실행하여 데이터베이스 연결을 확인할 수 있다. 간단한 JPA 리포지토리 또는 JDBC 템플릿을 이용하여 테스트 쿼리를 작성하면 된다.
+
+예시 코드 (JPA 리포지토리 사용):
+
+간단한 엔티티와 리포지토리를 작성하고, 애플리케이션이 정상적으로 데이터를 읽고 쓸 수 있는지 확인한다.
+
+```java
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<Member, Long> {
+}
+
+```
+
+이와 같이 작성한 후, 간단한 테스트 실행을 통해 데이터베이스 연결 상태를 확인할 수 있다.
+
+이러한 방법들을 통해 MySQL 데이터베이스와의 연결이 올바르게 설정되었는지 진단할 수 있다.
+
 <br>
 **참고 자료**
 
