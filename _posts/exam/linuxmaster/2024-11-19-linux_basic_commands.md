@@ -107,3 +107,11 @@ LinuxMaster
 
 - #export MYVAR=LinuxMaster : MYVAR 환경변수에 값을 세팅
 - #echo $MYVAR : $는 값을 참고 →LinuxMaster 출력
+
+
+<br>
+**참고 자료**
+
+---
+
+- <https://www.youtube.com/watch?v=9I3kcxhAY7Q&t=3233s>
