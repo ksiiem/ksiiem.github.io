@@ -82,21 +82,28 @@ categories: [Study, OS]
     ```
     
 
-✓ PATH 환경 변수 - 명령어(프로그램)가 위치한 경로를 찾는 순서 지정
+✓ **PATH 환경 변수** - 명령어(프로그램)가 위치한 경로를 찾는 순서 지정
 
 - PATH 환경 변수에 지정된 디렉터리를 순서대로 탐색하여 명령어(프로그램)을 찾고 실행
     - PATH 환경변수는 경로들을 모아놓은 것
 - 확인 : echo $PATH
-    - 뒤에
-- 설정: export PATH = [설정값:설정값•••]
+    - echo는 뒤에 나오는 문자열 등을 화면에 출력
+    - 뒤에 $가 붙어있음. 자신이 원하는 환경변수를 만들고 값을 설정한 후 사용 가능하여 다양한 환경변수를 지정하여 사용 → 환경변수 안의 실제 값을 참조하고 싶은 경우 환경변수 앞에 $를 붙임
+- 설정: export PATH = [설정값:설정값:•••]
     - ~/.bash_profile에 기본값 설정. (예) export PATH=$PATH:/var/myfile
+        - /var/myfile 파일의 디렉토리 안에서도 명령어가 있는지 없는지 찾겠다.
+        - 이미 지정되어 있는 PATH의 값 → 현재 지정되어 있는 PATH 뒤에다가 새로운 내가 원하는 디렉토리를 추가해주는 효과
+        - ~: 사용자의 home 폴더. 그 안에는 .bash_profile 사용자 설정 파일 안에 기본으로 이런 PATH와 관련된 환경변수들이 세팅되어 있음 → 로그인 하는 순간 이런 환경변수들이 적용되어 사용할 수 있게 됨
 
 ※ 기타 환경 변수의 확인 및 설정 방법도 동일함
 
 ```bash
 [LinuxMaster] #echo $PATH
 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
-LinuxMaster #export MYVAR=LinuxMaster
-LinuxMaster #echo $MYVAR
+[LinuxMaster] #export MYVAR=LinuxMaster
+[LinuxMaster] #echo $MYVAR
 LinuxMaster
 ```
+
+- #export MYVAR=LinuxMaster : MYVAR 환경변수에 값을 세팅
+- #echo $MYVAR : $는 값을 참고 →LinuxMaster 출력
