@@ -202,7 +202,147 @@ File: find.info, Node: Invoking find, Next: Invoking locate, Up: Reference
     - 사용자를 생성하게 되면 그 사용자를 관리하기 위한 다양한 정보들이 리눅스 설정 파일에 추가됨
     - /etc/passwd는 사용자가 로그인할 때 패스워드를 점검하고 사용된 환경(예. 사용자는 어떤 셸을 쓰는가)에서의 내용들을 기록
     - /etc/shadow는 일상적으로 사용자 비밀번호를 암호화해서 저장하고 관리하기 위해서 함께 사용하는 설정파일
+**✓ passwd - 사용자 패스워드 변경**
 
+- /etc/shadow 파일에 패스워드 변경 및 저장
+- passwd <-옵션> [계정명]
+    - 옵션 : -S (상태표시), -d (삭제), -l (잠금), -u (잠금해제)
+- 상태표시 정보 : **PS** (정상), **NP** (패스워드 없음), **LK** (잠금 혹은 패스워드 없는 상태)
+    
+    ```bash
+    [LinuxMaster] #passwd -S chris
+    chris LK 2023-01-08 0 999997-1 (비밀 번호 잠금.)
+    [LinuxMaster] #passwd chris
+    ...
+    passwd: 모든 인증 토큰이 성공적으로 업데이트 되었습니다.
+    [LinuxMaster] #passwd -S chris
+    Chris PS 2023-01-08 0 999997-1 (비밀번호 설정, SHA512 암호화. )
+    ```
+    
+    - #passwd -S chris : chris 계정의 상태 정보를 확인
+    - #passwd chris : 패스워드 설정 후, 상태 정보 확인
+        - 기본적으로 계정만 만든 상태에서는 패스워드가 없었는데,  패스워드 수정 passwd 명령의 결과로 업데이트 표시됨
+        - 두 번째 passwd -S chris 명령에서는 비밀번호도 설정되어 있고, 암호화도 잘 되어있음
+
+✓ su - 사용자 전환 (switch user)
+
+- 로그아웃 없이 다른 사용자의 계정으로 로그인, 다른 사용자의 권한을 획득
+    - 보통 다른 사용자의 계정. 일반적으로 루트와 같은 관리자 계정을 갖고 특정한 명령을 실행하기 위해 사용하기도 함
+    - 아무런 옵션을 주지 않으면 기본적으로 루트 계정으로 로그인하려고 함
+- su <-옵션> [계정명] <셸변수>
+    - 옵션 : **-** 혹은 **-l** 혹은 login (사용자 환경변수 적용), -s (쉘 지정), -c (계정 변환없이 지정한 명령어 실행)
+        - -c 옵션은 실제 계정을 전환하는 게 아닌, 전환했다 치고 해당 계정의 권한으로 명령만 실행하는 옵션
+    
+    ```bash
+    [LinuxMaster] #su chris
+    [LinuxMaster] #pwd
+    /root
+    [LinuxMaster] #exit
+    exit
+    [LinuxMaster) #su - chris
+    [chris@118-27-119-212 ~] $ pwd
+    /CHRIS
+    ```
+    
+    - #su - chris : 크리스 계정으로 로그인 → 크리스에게 로그인 시 설정되어 있는 여러가지 환경 설정 값들이 적용된 상태에서 사용자 계정이 전환이 됨
+
+✓ 사용자 설정 관련 환경 구성 파일
+
+- **/etc/default/useradd** : 사용자를 추가할 때 기본 설정 정보로 활용
+    - SKEL : 사용자 홈 디렉터리로 복사될 초기 환경 설정 파일이 저장된 디렉터리 지정
+- 텍스트 편집기 (vi, nano 등) 혹은 'useradd - D 옵션'으로 변경
+    
+    ```bash
+    [LinuxMaster] #cat /etc/default/useradd
+    # useradd defaults file
+    GROUP=100
+    HOME=/home
+    INACTIVE=-1
+    SHELL=/bin/bash
+    SKEL=/etc/skel
+    ...
+    ```
+    
+    - SKEL 변수는 사용자가 만들어질 때 사용자 홈 디렉토리로 복사해야 될( 기본적으로 저장해놓을) 설정 파일들이 위치해 있는 디렉토리 이름을 저장해주는 값
+    - 편집을 하는 것이므로 텍스트 편집기나 useradd -D 옵션으로 변경 가능
+- /etc/ passwd : 사용자 계정 정보 저장
+    - **파일 형식)** username : password : uid : gid : comment : home-directory : shell
+        - 최근에는 보안 등의 이슈로 코멘트는 사용하지 않기도 함
+        - **구성 필드 기억**
+    - password : 패스워드 → **pwconv 실행** (패스워드 필드는 보통 **x로 표시**, **/etc/shadow에 패스워드**를 암호화해서 **기록**), pwunconv로 비활성화
+- **/etc/shadow** : **사용자 패스워드 암호화 파일**
+    - 파일 형식) username : password: lastchange : mindays : maxdays : warndays : inactive : expire : flag
+        - lastchange : **1970년 1월 1일** 기준 최근 비밀번호 변경일
+        - mindays : 비밀번호 변경 후 재설정 가능한 최소 기간
+        - inactive : 비밀번호 만료 후 계정 사용 불가능 까지의 유예 기간
+        - expire : 계정 사용 정지 날짜 (1970년 1월 1일 기준으로 이후의 날짜 수)
+        - flag : 기본 0으로 설정
+- /etc/**login.defs** : 사용자 계정 설정 시 기본값
+    - 예) MAIL_DIR (메일 디렉터리), PASS_MAX_DAYS (패스워드 변경 없이 사용할 수 있는 최대 일 수), PASS_MIN_LEN (패스워드 최소 길이), CREATE_HOME (홈 디렉터리 생성 여부) 등
+    
+    ```bash
+    [LinuxMaster] #cat /etc/login.defs
+    ...
+    # PASS_MAX_DAYS Maximum number of days a password may be used.
+    # PASS_MIN_DAYS Minimum number of days allowed between password changes.
+    ...
+    PASS_MAX_DAYS 99999
+    PASS_MIN_DAYS O
+    ...
+    ```
+    
+
+✓ usermod - 사용자 계정 정보 수정
+
+- 사용자 홈 디렉터리, 그룹, 유효기간, 셸 등 정보를 변경
+- usermod <-옵션> [계정명]
+    - 옵션 : -u (새로운 UID), -g (새로운 GID), -G (새로운 보조 그룹), -d (새로운 홈 디렉터리), -s (새로운 셀), c (새로운 주석), -| (새로운 계정명)
+    
+    ```bash
+    /[LinuxMaster] #usermod - h
+    Usage: usermod [options] LOGIN
+    
+    Options:
+     - c, --comment COMMENT    new value of the GECOS field
+    ```
+    
+    - -h 옵션은 간단하게 명령의 특징과 사용할 수 있는 옵션들을 한눈에 볼 수 있음
+
+✓ userdel - 사용자 계정 정보 삭제
+
+- /etc/passwd, /etc/shadow, /etc/group에서 사용자 정보 삭제
+- usermod <-옵션> [계정명]
+    - 옵션 : **-r** (사용자의 메일 파일과 홈 디렉토리 모두 삭제)
+        - 사용자 계정 뿐만 아니라 관련된 것들 모두 삭제
+    
+    ```bash
+    [LinuxMaster| #userdel -h
+    Usage: userdel [options] LOGIN
+    
+    Options:
+    -f, --force      force some actions that would fail otherwise
+                  e.g. removal of user still logged in
+                  or files, even if not owned by the user
+    ... 
+    ```
+    
+
+✓ chage - 패스워드 만료 정보 변경
+
+- chage 〈-옵션〉 [계정명]
+    - 옵션 : -l (계정 정보 표시), -m (최소 사용 일자), -M (사용 가능 일자), -E (만기일), -W (만기 전 지정 날짜 부터 경고)
+
+```bash
+[LinuxMaster] #chage -l chris
+마지막으로 암호를 바꾼 날       : 1월 08, 2023
+암호 만료               : 안함
+암호가 비활성화 기간          :안함
+계정 만료               : 안함
+암호를 바꿀 수 있는 최소 날 수 :0
+암호를 바꿔야 하는 최대 날 수 : 99999
+암호 만료 예고를 하는 날 수 :7
+...
+```
 <br>
 **참고 자료**
 
