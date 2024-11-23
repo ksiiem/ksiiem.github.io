@@ -107,7 +107,101 @@ LinuxMaster
 
 - #export MYVAR=LinuxMaster : MYVAR 환경변수에 값을 세팅
 - #echo $MYVAR : $는 값을 참고 →LinuxMaster 출력
+✓ man - 리눅스 명령어의 메뉴얼(manual) 확인
 
+- 리눅스에서 사용할 수 있는 명령어들의 메뉴얼을 확인
+- man <섹션><-옵션〉 [명령어]
+    - 섹션 : 1 (일반), 2 (시스템 호출), 3 (C 표준 함수), 4 (장치/특수 파일), 5 (특정한 파일), 6 (게임/화면보호기), 7 (리눅스 파일 표준, 프로토콜, 시그널 목록), 8 (시스템 관리 명령어, 데몬 정보), 9 (커널 관리 정보)
+    - -h (사용법 표시), -a (모든 페이지 표시), -w (검색 문자의 메뉴얼 페이지의 위치 표시), -f (키워드 검색하여 페이지 표시)
+        - man의 옵션자체가 궁금해서 도움말을 보는 -h 옵션
+        - 키워드를 검색해서 관련된 그 키워드가 있는지를 살펴보는 -f 옵션
+    
+    ```bash
+    [LinuxMaster] #man find
+    FIND(1)              General Commands Manual             FIND(1)
+    NAME
+    	find - search for files in a directory hierarchy
+    ...
+    ```
+    
+    - 파일을 검색할 수 있는 명령어인 find의 메뉴얼을 표시해주게 됨
+
+✓ apropos - 명령어 메뉴얼에서 지정한 키워드가 포함된 것을 검색
+
+- **whatis 데이터베이스를 참조**하여 지정한 문자열을 포함한 것을 검색하여 표시
+- apropos [문자열]
+    
+    ```bash
+    [LinuxMaster] #apropos find 
+    ffs (3)        - find first bit set in a word
+    ffsl (3)       - find first bit set in a word
+    ffsll (3)      - find first bit set in a word
+    tfind (3)      - manage a binary tree
+    ttyslot (3)    - find the slot of the current user's terminal in some file
+    ```
+    
+    - whatis 데이터베이스를 참조하여 find 문자열이 포함되어 있는 것들을 검색해서 보여줌
+
+✓ manpath - man 명령이 참조하는 메뉴얼의 경로 표시
+
+- man 명령이 페이지를 찾기 위해 탐색하는 경로 정보를 표시
+    - man 명령어도 어딘가에서 데이터를 보고 참고해서 화면에 표시해 주는 것
+    - 리눅스에 기본적으로 설치되어 있는 프로그램이 아니라 인터넷으로부터 새로운 프로그램을 다운 받아서 프로그램을 설치할 경우, 해당 프로그램에 대한 메뉴얼도 함께 설치하게 되는 경우도 있는데, 메뉴얼 파일의 위치를 찾고자 할 때
+- manpath
+    
+    ```bash
+    [LinuxMaster] #manpath
+    /usr/local/share/man:/usr/share/man/overrides:/usr/share/man
+    ```
+    
+
+✓ info - 리눅스 명령어의 사용법, 옵션 등 표시
+
+- 리눅스 명령어의 사용법, 옵션 등을 표시. man 명령보다 제한적인 기능 제공
+- info [명령어]
+
+```bash
+[LinuxMaster] #info find
+File: find.info, Node: Invoking find, Next: Invoking locate, Up: Reference
+
+8.1 Invoking 'find'
+ニニニニニニニニニニニニニニニニニニニ
+
+	find [-H] [-L] [-P] [-D DEBUGOPTIONS] [-OLEVEL] [FILE...] [EXPRESSION]
+...
+```
+
+✓ whatis - 명령어의 기능을 **간략히 표시**
+
+- **whatis 데이터베이스에서 키워드를 검색**하여 일치할 경우 명령어의 기능을 표시
+- whatis [명령어]
+    
+    ```bash
+    [LinuxMaster] #whatis find
+    find (1p)    - find files
+    find (1)     - search for files in a directory hierarchy
+    ```
+    
+
+## 사용자 생성 및 계정 관리
+
+✓ useradd, adduser - 사용자 계정 생성
+
+- 사용자 계정과 관련 정보를 생성
+- **useradd 〈-옵션〉 [계정명]**
+    - 옵션 : -s (로그인 셸 지정), -d (홈 디렉터리 지정), -f (패스워드 만료 후 계정 영구 정지까지의 기간), -e (계정의 유효기간, 임시계정 생성), -c (/etc/passwd에 사용자 설명 추가), -G (소속할 그룹 추가)
+        - 해당 사용자를 로그인할 때, 특정한 쉘을 사용, 홈 디렉토리 경로, 패스워드 만료기간 등 지정 가능
+- 기본 홈 디렉터리 : **/home/계정명**
+    - 일반 사용자의 경우
+- 계정 정보 파일 :  **/etc/passwd, /etc/shadow, /etc/group**에 정보 추가
+    
+    ```bash
+    [LinuxMaster] #useradd - d /CHRIS chris
+    ```
+    
+    - 사용자를 생성하게 되면 그 사용자를 관리하기 위한 다양한 정보들이 리눅스 설정 파일에 추가됨
+    - /etc/passwd는 사용자가 로그인할 때 패스워드를 점검하고 사용된 환경(예. 사용자는 어떤 셸을 쓰는가)에서의 내용들을 기록
+    - /etc/shadow는 일상적으로 사용자 비밀번호를 암호화해서 저장하고 관리하기 위해서 함께 사용하는 설정파일
 
 <br>
 **참고 자료**
