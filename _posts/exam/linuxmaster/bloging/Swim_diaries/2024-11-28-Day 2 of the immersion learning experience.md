@@ -1,5 +1,5 @@
 ---
-title: "[잠영] 2022년 11 28 2일차"
+title: "[잠영] 2024년 11 28 2일차"
 categories: [Bloging, Swim diaries]
 ---
 
