@@ -1,5 +1,5 @@
 ---
-title: "[자유형] 2024년 11 27 1일차"
+title: "2024년 11 27 1일차"
 categories: [Bloging, Swim diaries]
 ---
 
