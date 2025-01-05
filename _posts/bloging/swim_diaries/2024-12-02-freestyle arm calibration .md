@@ -1,5 +1,5 @@
 ---
-title: "[자유형] 2024년 12 02 교정 3일차"
+title: "2024년 12 02 교정 3일차"
 categories: [Bloging, Swim diaries]
 ---
 
