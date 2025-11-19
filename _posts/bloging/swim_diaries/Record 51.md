@@ -1,0 +1,9 @@
+---
+title: "Record 51"
+categories: [Bloging, Swim diaries]
+---
+
+- 자유 수영
+  - 발끝을 끝까지 모으기. 약간 킥판을 문다는 느낌으로! 
+  - 물 잡기는 YouTube에서 본 대로 연습하기
+    - 지긋이 가져와서 90도로 굽혀서 한번에 보낸다.
