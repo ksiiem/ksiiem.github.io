@@ -1,5 +1,5 @@
 ---
-title: "Record 3"
+title: "2024년 12월 2일 Record 3"
 categories: [Bloging, Swim diaries]
 ---
 
